@@ -6,26 +6,25 @@ export function activate(context: vscode.ExtensionContext) {
     let current_file:vscode.TextEditor = vscode.window.activeTextEditor!;
 
     if(current_file != undefined) {
-      let file_name
+      if(current_file.document.uri.path.includes('spec')) {
+        let prefix_path:string = current_file.document.uri.path.split('spec/')[0];
 
-      let myRe = /(.+\/)*(.+)\.(.+)$/;
-      let split_path = myRe.exec(current_file.document.uri.path);
+        let file_path:string = current_file.document.uri.path.split('spec/')[1].split('_spec.lua')[0];
+        console.log(file_path)
 
-      if(split_path != null) {
-        console.log("End of File: " + split_path[2]);
-        file_name = split_path[2];
+        let test_file_path:string = prefix_path + 'src/' + file_path + '.lua';
+        console.log(test_file_path);
+        vscode.workspace.openTextDocument(test_file_path).then(doc => vscode.window.showTextDocument(doc));
+      }
+      else {
+        let prefix_path:string = current_file.document.uri.path.split('src/')[0];
 
-        if(file_name.includes('spec')) {
-          file_name = file_name.replace('_spec','');
-          let test_file_path:string = split_path[1] + '../src/' + file_name + '.lua';
-          console.log(test_file_path);
-          vscode.workspace.openTextDocument(test_file_path).then(doc => vscode.window.showTextDocument(doc));
-        }
-        else {
-          let test_file_path:string = split_path[1] + '../spec/' + file_name + '_spec.lua';
-          console.log(test_file_path);
-          vscode.workspace.openTextDocument(test_file_path).then(doc => vscode.window.showTextDocument(doc));
-        }
+        let file_path:string = current_file.document.uri.path.split('src/')[1].split('.lua')[0]
+        console.log(file_path)
+
+        let test_file_path:string = prefix_path + 'spec/' + file_path + '_spec.lua';
+        console.log(test_file_path);
+        vscode.workspace.openTextDocument(test_file_path).then(doc => vscode.window.showTextDocument(doc));
       }
     }
 	});
@@ -38,3 +37,9 @@ export function deactivate() {}
 
 // todo
 // cache file paths so we don't need to solve them again
+
+
+//requirements
+//src and spec folder are at same level in directory
+//test files have _spec as a suffix
+//test files are the same name as their module they are testing
