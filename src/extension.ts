@@ -12,12 +12,12 @@ export function activate(context: vscode.ExtensionContext) {
       let myRe = /(.+\/)*(.+)\.(.+)$/;
       let regexArray = myRe.exec(current_file.document.uri.path);
       if(regexArray != null) {
-        console.log(regexArray[2])
+        console.log("End of File: " + regexArray[2])
         end_of_file = regexArray[2]
 
-        let test_file_path:string = current_file.document.uri.path + '../spec/' + end_of_file + '_spec.lua'
-        vscode.window.showInformationMessage(current_file.document.uri.path);
-        vscode.workspace.openTextDocument(test_file_path)
+        let test_file_path:string = regexArray[1] + '../spec/' + end_of_file + '_spec.lua'
+        console.log(test_file_path)
+        vscode.workspace.openTextDocument(test_file_path).then(doc => vscode.window.showTextDocument(doc))
       }
     }
 	});
