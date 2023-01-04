@@ -4,20 +4,26 @@ exports.deactivate = exports.activate = void 0;
 const vscode = require("vscode");
 function activate(context) {
     console.log('Congratulations, your extension "test-file-keybinding-extension" is now active!');
-    let disposable = vscode.commands.registerCommand('test-file-keybinding-extension.helloWorld', () => {
+    let disposable = vscode.commands.registerCommand('test-file-keybinding-extension.toggleTestFile', () => {
         let current_file = vscode.window.activeTextEditor;
         if (current_file != undefined) {
-            console.log(current_file.document.uri);
-            let end_of_file;
+            let file_name;
             let myRe = /(.+\/)*(.+)\.(.+)$/;
-            let regexArray = myRe.exec(current_file.document.uri.path);
-            if (regexArray != null) {
-                console.log("End of File: " + regexArray[2]);
-                end_of_file = regexArray[2];
-                let test_file_path = regexArray[1] + '../spec/' + end_of_file + '_spec.lua';
-                console.log(test_file_path);
-                vscode.workspace.openTextDocument(test_file_path).then(doc => vscode.window.showTextDocument(doc));
-                // vscode.window.showInformationMessage(test_file_path);
+            let split_path = myRe.exec(current_file.document.uri.path);
+            if (split_path != null) {
+                console.log("End of File: " + split_path[2]);
+                file_name = split_path[2];
+                if (file_name.includes('spec')) {
+                    file_name = file_name.replace('_spec', '');
+                    let test_file_path = split_path[1] + '../src/' + file_name + '.lua';
+                    console.log(test_file_path);
+                    vscode.workspace.openTextDocument(test_file_path).then(doc => vscode.window.showTextDocument(doc));
+                }
+                else {
+                    let test_file_path = split_path[1] + '../spec/' + file_name + '_spec.lua';
+                    console.log(test_file_path);
+                    vscode.workspace.openTextDocument(test_file_path).then(doc => vscode.window.showTextDocument(doc));
+                }
             }
         }
     });
@@ -26,4 +32,6 @@ function activate(context) {
 exports.activate = activate;
 function deactivate() { }
 exports.deactivate = deactivate;
+// todo
+// cache file paths so we don't need to solve them again
 //# sourceMappingURL=extension.js.map

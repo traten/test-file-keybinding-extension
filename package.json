@@ -16,8 +16,8 @@
   "contributes": {
     "commands": [
       {
-        "command": "test-file-keybinding-extension.helloWorld",
-        "title": "Hello World"
+        "command": "test-file-keybinding-extension.toggleTestFile",
+        "title": "Toggle Test File"
       }
     ]
   },
